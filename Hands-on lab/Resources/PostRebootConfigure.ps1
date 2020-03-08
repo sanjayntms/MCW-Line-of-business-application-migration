@@ -208,7 +208,7 @@ Unzip-Files -Files $zipfiles -Destination $vmDir
 # Create the NAT network
 Write-Output "Create internal NAT"
 $natName = "InternalNat"
-New-NetNat -Name $natName -InternalIPInterfaceAddressPrefix 192.168.0.0/16
+New-NetNat -Name $natName -InternalIPInterfaceAddressPrefix 192.168.1.0/24
 
 # Create an internal switch with NAT
 Write-Output "Create internal switch"
@@ -218,7 +218,7 @@ $adapter = Get-NetAdapter | Where-Object { $_.Name -like "*"+$switchName+"*" }
 
 # Create an internal network (gateway first)
 Write-Output "Create gateway"
-New-NetIPAddress -IPAddress 192.168.0.1 -PrefixLength 24 -InterfaceIndex $adapter.ifIndex
+New-NetIPAddress -IPAddress 192.168.1.101 -PrefixLength 24 -InterfaceIndex $adapter.ifIndex
 
 # Enable Enhanced Session Mode on Host
 Write-Output "Enable Enhanced Session Mode"
@@ -233,10 +233,10 @@ New-VM -Name UbuntuWAF      -MemoryStartupBytes 4GB -BootDevice VHD -VHDPath "$v
 
 # Configure IP addresses (don't change the IPs! VM config depends on them)
 Write-Output "Configure VM networking"
-Get-VMNetworkAdapter -VMName "smarthotelweb1" | Set-VMNetworkConfiguration -IPAddress "192.168.0.4" -Subnet "255.255.255.0" -DefaultGateway "192.168.0.1" -DNSServer "8.8.8.8"
-Get-VMNetworkAdapter -VMName "smarthotelweb2" | Set-VMNetworkConfiguration -IPAddress "192.168.0.5" -Subnet "255.255.255.0" -DefaultGateway "192.168.0.1" -DNSServer "8.8.8.8"
-Get-VMNetworkAdapter -VMName "smarthotelsql1" | Set-VMNetworkConfiguration -IPAddress "192.168.0.6" -Subnet "255.255.255.0" -DefaultGateway "192.168.0.1" -DNSServer "8.8.8.8"
-Get-VMNetworkAdapter -VMName "UbuntuWAF"      | Set-VMNetworkConfiguration -IPAddress "192.168.0.8" -Subnet "255.255.255.0" -DefaultGateway "192.168.0.1" -DNSServer "8.8.8.8"
+Get-VMNetworkAdapter -VMName "smarthotelweb1" | Set-VMNetworkConfiguration -IPAddress "192.168.1.4" -Subnet "255.255.255.0" -DefaultGateway "192.168.0.1" -DNSServer "8.8.8.8"
+Get-VMNetworkAdapter -VMName "smarthotelweb2" | Set-VMNetworkConfiguration -IPAddress "192.168.1.5" -Subnet "255.255.255.0" -DefaultGateway "192.168.0.1" -DNSServer "8.8.8.8"
+Get-VMNetworkAdapter -VMName "smarthotelsql1" | Set-VMNetworkConfiguration -IPAddress "192.168.1.6" -Subnet "255.255.255.0" -DefaultGateway "192.168.0.1" -DNSServer "8.8.8.8"
+Get-VMNetworkAdapter -VMName "UbuntuWAF"      | Set-VMNetworkConfiguration -IPAddress "192.168.1.8" -Subnet "255.255.255.0" -DefaultGateway "192.168.0.1" -DNSServer "8.8.8.8"
 
 # We always want the VMs to start with the host and shut down cleanly with the host
 # (If they just save state, which is the default, they can break if the host re-starts on a different CPU architecture)
@@ -264,9 +264,9 @@ Wait-For-Website('http://192.168.0.8')
 # Add NAT forwarders
 # We do this and the firewall rules last so the user check that the web site is working when accessed via the host IP only works once all the other set-up is completed
 Write-Output "Create NAT rules"
-Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 22   -Protocol TCP -InternalIPAddress "192.168.0.8" -InternalPort 22   -NatName $natName
-Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 80   -Protocol TCP -InternalIPAddress "192.168.0.8" -InternalPort 80   -NatName $natName
-Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 1433 -Protocol TCP -InternalIPAddress "192.168.0.6" -InternalPort 1433 -NatName $natName
+Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 22   -Protocol TCP -InternalIPAddress "192.168.1.8" -InternalPort 22   -NatName $natName
+Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 80   -Protocol TCP -InternalIPAddress "192.168.1.8" -InternalPort 80   -NatName $natName
+Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 1433 -Protocol TCP -InternalIPAddress "192.168.1.6" -InternalPort 1433 -NatName $natName
 
 # Add a firewall rule for HTTP and SQL
 Write-Output "Create firewall rules"
