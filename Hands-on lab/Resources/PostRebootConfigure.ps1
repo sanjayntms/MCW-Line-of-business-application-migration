@@ -253,9 +253,9 @@ Wait-For-Website('http://192.168.0.8')
 
 # Rearm (extend evaluation license) and reboot each Windows VM
 Write-Output "Re-arming Windows VMs (extend eval licenses)"
-Rearm-VM -ComputerName "smarthotelweb1" -Username "Administrator" -Password "demo@pass123"
-Rearm-VM -ComputerName "smarthotelweb2" -Username "Administrator" -Password "demo@pass123"
-Rearm-VM -ComputerName "smarthotelSQL1" -Username "Administrator" -Password "demo@pass123"
+Rearm-VM -ComputerName "smarthotelweb1" -Username "Administrator" -Password "123#ntms123#"
+Rearm-VM -ComputerName "smarthotelweb2" -Username "Administrator" -Password "123#ntms123#"
+Rearm-VM -ComputerName "smarthotelSQL1" -Username "Administrator" -Password "123#ntms123#"
 
 # Warm up the app after the re-arm reboots
 Write-Output "Waiting for SmartHotel reboot"
