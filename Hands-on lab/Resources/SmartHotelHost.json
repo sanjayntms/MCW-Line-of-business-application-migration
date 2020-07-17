@@ -12,7 +12,7 @@
         },
         "adminPassword": {
             "type": "securestring",
-            "defaultValue": "demo@pass123",
+            "defaultValue": "123#ntms123#",
             "metadata": {
               "description": "Password for the Virtual Machine."
             }
