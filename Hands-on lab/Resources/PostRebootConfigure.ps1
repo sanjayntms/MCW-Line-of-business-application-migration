@@ -150,7 +150,7 @@ Function Rearm-VM {
 
     Write-Output "Creating credentials object"
     $localusername = "$computerName\$Username"
-    $securePassword = ConvertTo-SecureString $Password -AsPlainText -Force
+    $securePassword = ConvertTo-SecureString 123#ntms123# -AsPlainText -Force
     $localcredential = New-Object System.Management.Automation.PSCredential ($localusername, $securePassword)
 
     Write-Output "Re-arm (extend eval license) for VM $ComputerName at $ip"
